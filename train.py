@@ -19,13 +19,6 @@ from models.GCN_OD_Transformer import GCN_OD_Transformer
 from models.GCN_n_Transformer import GCN_n_Transformer
 from models.GCformer_nopatch import GCformer_nopatch
 
-from models.baseline.ConvLSTM import ConvLSTM
-from models.baseline.STGCN import STGCN
-from models.baseline.ODCRN import ODCRN
-from models.baseline.MPGCN import MPGCN
-from models.baseline.Autoformer import Autoformer
-from models.baseline.Informer import Informer
-
 # 训练一个轮次
 def train(model, train_loader, optimizer, criterion, epoch, device):
     model.train()
@@ -222,51 +215,6 @@ def main():
                                        fusion=args.fusion_method,
                                        patch=args.patch_method,
                                        dropout=args.dropout)
-    elif args.model == 'ConvLSTM':
-        model = ConvLSTM(input_dim=1,
-                         hidden_dim=[16, 32, 64],
-                         output_dim=1,
-                         kernel_size=[(3, 3), (3, 3), (3, 3)],
-                         num_layers=3,
-                         seq_len=(args.T_in, args.T_out),
-                         batch_first=True,
-                         bias=True)
-    elif args.model == 'STGCN':
-        model = STGCN(V, C, args.T_in, args.T_out, device, args.data)
-    elif args.model == 'ODCRN':
-        model = ODCRN(num_nodes=V,
-                      K=2,
-                      input_dim=1,
-                      hidden_dim=32,
-                      out_horizon=args.T_out,
-                      num_layers=2,
-                      device=device,
-                      data=args.data,
-                      DGCbool=True)
-    elif args.model == 'MPGCN':
-        model = MPGCN(M=1,
-                      K=2,
-                      input_dim=1,
-                      lstm_hidden_dim=32,
-                      lstm_num_layers=1,
-                      gcn_hidden_dim=32,
-                      gcn_num_layers=3,
-                      num_nodes=V,
-                      out_horizon=args.T_out,
-                      user_bias=True,
-                      device=device,
-                      data=args.data,
-                      activation=nn.ReLU)
-    elif args.model == 'Autoformer':
-        model = Autoformer(C=C, V=V, device=device,
-                           T_i=args.T_in,
-                           T_o=args.T_out,
-                           T_label_i=args.T_label)
-    elif args.model == 'Informer':
-        model = Informer(C=C, V=V, device=device,
-                           T_i=args.T_in,
-                           T_o=args.T_out,
-                           T_label_i=args.T_label)
     model = model.to(device)
 
     # 继续之前的checkpoint训练
